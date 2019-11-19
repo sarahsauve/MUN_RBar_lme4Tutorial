@@ -19,64 +19,88 @@ ui <- fluidPage(
     
     p("This is an app demonstrating how each parameter in a mixed effects linear model affects the predictions the model makes. The data are shown in
     black and the predictions made by the model you build are shown in red. You can manipulate  the overall intercept, the overall slope, the intercept
-    for each PARTICIPANT and the slope for each ITEM.
+    for each PARTICIPANT and each ITEM and the slope of each PARTICIPANT by CATEGORY.
       On the far left are the model intercept and slope values, where the slope reflects the main effect of your manipulated variable, here the type
-      of word. The next four sliders are the random effects on intercepts, or the individual intercepts for each participant. The last four are the
-      random effects on slopes, or the individual slopes for each item.
+      of word. The four sliders in the top row are the first random effects on intercepts, or the individual intercepts for each participant.
+      The next four are the second random effects on intercepts, or the individual intercepts for each item. The last four are the
+      random effects on slopes, or the individual slopes for each participant's reaction to each category.
       The app takes these values and computes y = mx + b where b is the overall intercept plus the intercept you've assigned to that participant
-      and m is the overall slope plus the slope you've assigned to that item."),
+      and item and m is the overall slope plus the slope you've assigned to that participant."),
     
     # Sidebar with a slider input for number of bins 
     fluidRow(column(2, sliderInput("Intercept",
                                    "Choose an intercept value:",
                                    min = 700,
                                    max = 950,
-                                   value = 800),
-                    sliderInput("FixedEffect",
-                                "Choose a value for 'm', or the size of the effect of the manipulated variable:",
-                                min = -100,
-                                max = 100,
-                                value = 0)),
+                                   value = 800)),
              column(2, sliderInput("RandIntP1",
-                                   "Choose a value by which PARTICIPANT 1's intercept will be different from the primary intercept:",
+                                   "PARTICIPANT 1's intercept:",
                                    min = -200,
                                    max = 200,
-                                   value = 0),
-                    sliderInput("RandIntP2",
-                                "Choose a value by which PARTICIPANT 2's intercept will be different from the primary intercept:",
+                                   value = 0)),
+             column(2, sliderInput("RandIntP2",
+                                "PARTICIPANT 2's intercept:",
                                 min = -200,
                                 max = 200,
                                 value = 0)),
              column(2, sliderInput("RandIntP3",
-                                   "Choose a value by which PARTCIPANT 3's intercept will be different from the primary intercept:",
-                                   min = -200,
-                                   max = 200,
-                                   value = 0),
-                    sliderInput("RandIntP4",
-                                "Choose a value by which PARTICIPANT 4's intercept will be different from the primary intercept:",
+                                "PARTCIPANT 3's intercept:",
                                 min = -200,
                                 max = 200,
                                 value = 0)),
-             column(2, sliderInput("RandSlopeI1",
-                                    "Choose a value by which ITEM 1's slope will be different from the primary slope:",
-                                    min = -300,
-                                    max = 300,
-                                    value = 0),
-                    sliderInput("RandSlopeI2",
-                                "Choose a value by which ITEM 2's slope will be different from the primary slope:",
-                                min = -300,
-                                max = 300,
-                                value = 0)),
-             column(2, sliderInput("RandSlopeI3",
-                                    "Choose a value by which ITEM 3's slope will be different from the primary slope:",
-                                    min = -300,
-                                    max = 300,
-                                    value = 0),
-                    sliderInput("RandSlopeI4",
-                                "Choose a value by which ITEM 4's slope will be different from the primary slope:",
-                                min = -300,
-                                max = 300,
+             column(2, sliderInput("RandIntP4",
+                                "PARTICIPANT 4's intercept:",
+                                min = -200,
+                                max = 200,
                                 value = 0))),
+    fluidRow(
+      column(2, sliderInput("FixedEffect",
+                  "Choose a value for 'm', or the size of the effect of the manipulated variable:",
+                  min = -100,
+                  max = 100,
+                  value = 0)),
+      column(2, sliderInput("RandIntI1",
+                            "ITEM 1's intercept:",
+                            min = -200,
+                            max = 200,
+                            value = 0)),
+      column(2, sliderInput("RandIntI2",
+                                        "ITEM 2's intercept:",
+                                        min = -200,
+                                        max = 200,
+                                        value = 0)),
+      column(2, sliderInput("RandIntI3",
+                  "ITEM 3's intercept:",
+                  min = -200,
+                  max = 200,
+                  value = 0)),
+      column(2, sliderInput("RandIntI4",
+                  "ITEM 4's intercept:",
+                  min = -200,
+                  max = 200,
+                  value = 0))),
+    fluidRow(
+      column(2, offset = 2, sliderInput("RandSlopeP1",
+                  "PARTICIPANT 1's slope:",
+                  min = -300,
+                  max = 300,
+                  value = 0)),
+      column(2, sliderInput("RandSlopeP2",
+                  "PARTICIPANT 2's slope:",
+                  min = -300,
+                  max = 300,
+                  value = 0)),
+      column(2, sliderInput("RandSlopeP3",
+                  "PARTICIPANT 3's slope:",
+                  min = -300,
+                  max = 300,
+                  value = 0)),
+      column(2, sliderInput("RandSlopeP4",
+                  "PARTICIPANT 4's slope:",
+                  min = -300,
+                  max = 300,
+                  value = 0))),
+    
     fluidRow(
         mainPanel(
             plotOutput("modelPlot")
@@ -94,28 +118,32 @@ server <- function(input, output) {
         b2 <- input$RandIntP2
         b3 <- input$RandIntP3
         b4 <- input$RandIntP4
-        m1 <- input$RandSlopeI1
-        m2 <- input$RandSlopeI2
-        m3 <- input$RandSlopeI3
-        m4 <- input$RandSlopeI4
+        m1 <- input$RandSlopeP1
+        m2 <- input$RandSlopeP2
+        m3 <- input$RandSlopeP3
+        m4 <- input$RandSlopeP4
+        b1i <- input$RandIntI1
+        b2i <- input$RandIntI2
+        b3i <- input$RandIntI3
+        b4i <- input$RandIntI4
         x <- 1
         
-        data$Predictions[data$Subject == 1 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b1)
-        data$Predictions[data$Subject == 1 & data$Item == 2] <- (((2*m0)+(2*m2))*x) + (b0 + b1)
-        data$Predictions[data$Subject == 1 & data$Item == 3] <- (((3*m0)+(3*m3))*x) + (b0 + b1)
-        data$Predictions[data$Subject == 1 & data$Item == 4] <- (((4*m0)+(4*m4))*x) + (b0 + b1)
-        data$Predictions[data$Subject == 2 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b2)
-        data$Predictions[data$Subject == 2 & data$Item == 2] <- (((2*m0)+(2*m2))*x) + (b0 + b2)
-        data$Predictions[data$Subject == 2 & data$Item == 3] <- (((3*m0)+(3*m3))*x) + (b0 + b2)
-        data$Predictions[data$Subject == 2 & data$Item == 4] <- (((4*m0)+(4*m4))*x) + (b0 + b2)
-        data$Predictions[data$Subject == 3 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b3)
-        data$Predictions[data$Subject == 3 & data$Item == 2] <- (((2*m0)+(2*m2))*x) + (b0 + b3)
-        data$Predictions[data$Subject == 3 & data$Item == 3] <- (((3*m0)+(3*m3))*x) + (b0 + b3)
-        data$Predictions[data$Subject == 3 & data$Item == 4] <- (((4*m0)+(4*m4))*x) + (b0 + b3)
-        data$Predictions[data$Subject == 4 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b4)
-        data$Predictions[data$Subject == 4 & data$Item == 2] <- (((2*m0)+(2*m2))*x) + (b0 + b4)
-        data$Predictions[data$Subject == 4 & data$Item == 3] <- (((3*m0)+(3*m3))*x) + (b0 + b4)
-        data$Predictions[data$Subject == 4 & data$Item == 4] <- (((4*m0)+(4*m4))*x) + (b0 + b4)
+        data$Predictions[data$Subject == 1 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b1 + b1i)
+        data$Predictions[data$Subject == 1 & data$Item == 2] <- ((m0+m2)*x) + (b0 + b1 + b2i)
+        data$Predictions[data$Subject == 1 & data$Item == 3] <- (((2*m0)+(2*m3))*x) + (b0 + b1 + b3i)
+        data$Predictions[data$Subject == 1 & data$Item == 4] <- (((2*m0)+(2*m4))*x) + (b0 + b1 + b4i)
+        data$Predictions[data$Subject == 2 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b2 + b1i)
+        data$Predictions[data$Subject == 2 & data$Item == 2] <- ((m0+m2)*x) + (b0 + b2 + b2i)
+        data$Predictions[data$Subject == 2 & data$Item == 3] <- (((2*m0)+(2*m3))*x) + (b0 + b2 + b3i)
+        data$Predictions[data$Subject == 2 & data$Item == 4] <- (((2*m0)+(2*m4))*x) + (b0 + b2 + b4i)
+        data$Predictions[data$Subject == 3 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b3 + b1i)
+        data$Predictions[data$Subject == 3 & data$Item == 2] <- ((m0+m2)*x) + (b0 + b3 + b2i)
+        data$Predictions[data$Subject == 3 & data$Item == 3] <- (((2*m0)+(2*m3))*x) + (b0 + b3 + b3i)
+        data$Predictions[data$Subject == 3 & data$Item == 4] <- (((2*m0)+(2*m4))*x) + (b0 + b3 + b4i)
+        data$Predictions[data$Subject == 4 & data$Item == 1] <- ((m0+m1)*x) + (b0 + b4 + b1i)
+        data$Predictions[data$Subject == 4 & data$Item == 2] <- ((m0+m2)*x) + (b0 + b4 + b2i)
+        data$Predictions[data$Subject == 4 & data$Item == 3] <- (((2*m0)+(2*m3))*x) + (b0 + b4 + b3i)
+        data$Predictions[data$Subject == 4 & data$Item == 4] <- (((2*m0)+(2*m4))*x) + (b0 + b4 + b4i)
         
         return(data)
     })
