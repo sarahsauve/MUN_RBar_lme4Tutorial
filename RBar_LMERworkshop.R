@@ -111,10 +111,24 @@ fixef(random.intercepts)
 #VarCorr extracts the random effects table
 VarCorr(random.intercepts)
 
-#---------- Random Effects 2 -------------------
-#Now we'll add random slopes for each participant based on each item
+#And now we'll model random intercepts for each item
 
-random.slopes <- lmer(RT ~ 1 + Category + (Item|Subject), data = data)
+random.item.intercepts <- lmer(RT ~ 1 + Category + (1|Subject) + (1|Item), data = data)
+
+#Look at the model
+summary(random.item.intercepts)
+
+#Add predictions to data frame
+data$randitemintercept.predictions <- fitted(random.item.intercepts)
+
+#Visualize
+dataplot +
+  geom_point(aes(y = data$randitemintercept.predictions), shape = "triangle", size = 4)
+
+#---------- Random Effects 2 -------------------
+#Now we'll add random slopes for each participant based on each category - each person will react differently to each type of word
+
+random.slopes <- lmer(RT ~ 1 + Category + (Category|Subject) + (1|Item), data = data)
 
 #Look at the model
 summary(random.slopes)
@@ -144,7 +158,7 @@ ggplot(longdata, aes(x = Item, y = Raw)) +
 
 data$Age <- rnorm(n = 16, mean = 40, sd = 10)
 
-covariate <- lmer(RT ~ 1 + Category + Age + (Item|Subject), data = data)
+covariate <- lmer(RT ~ 1 + Category + Age + (Category|Subject) + (1|Item), data = data)
 
 #Look at model
 summary(covariate)
@@ -160,21 +174,22 @@ dataplot +
 
 #Interactions
 
-interaction <- lmer(RT ~ 1 + Category * Age + (Item|Subject), data = data)
+interaction <- lmer(RT ~ 1 + Category * Age + (Category|Subject) + (1|Item), data = data)
 
 #separate predictors
 
-sep.predictors <- lmer(RT ~ 1 + Category + Age + Category:Age + (Item|Subject), data = data)
+sep.predictors <- lmer(RT ~ 1 + Category + Age + Category:Age + (Category|Subject) + (1|Item), data = data)
 
 #This is the same:
 
-equal.random.slopes <- lmer(RT ~ 1 + Category + (1+Item|Subject), data = data)
-equal.random.slopes2 <- lmer(RT ~ Category + (Item|Subject), data = data)
+equal.random.slopes <- lmer(RT ~ 1 + Category + (1+Category|Subject) + (1|Item), data = data)
+equal.random.slopes2 <- lmer(RT ~ Category + (Category|Subject) + (1|Item), data = data)
 #(the intercept is implied)
 
 #Remove covariance between random effects
+#This should only be done if you don't want these values to covary, which they do in real life so it needs to be justified
 
-no.covariance <- lmer(RT ~ 1 + Category + (1|Subject) + (0+Item|Subject), data = data)
+no.covariance <- lmer(RT ~ 1 + Category + (1|Subject) + (0+Category|Subject) + (1|Item), data = data)
 summary(no.covariance)
 
 #=======================================================================================================================================================
