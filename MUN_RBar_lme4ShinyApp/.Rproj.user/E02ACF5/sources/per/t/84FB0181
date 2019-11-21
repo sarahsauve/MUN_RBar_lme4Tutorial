@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574112459326.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2846292234",
+    "id" : "84FB0181",
+    "lastKnownWriteTime" : 1574185278,
+    "last_content_update" : 1574185278666,
+    "path" : "C:/Sync/Sauve/MUN Postdoc/RBar_LMERworkshop.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "142,0",
+        "scrollLine" : "116"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

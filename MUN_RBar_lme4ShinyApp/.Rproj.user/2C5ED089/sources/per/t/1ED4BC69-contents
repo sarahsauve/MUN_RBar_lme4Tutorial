@@ -1,0 +1,52 @@
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+
+library(shiny)
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("My First App"),
+
+    p("This is an app demonstrating the effect of bin size on a histogram's appearance"),
+    
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+            sliderInput("bins",
+                        "Choose the best bin number:",
+                        min = 10,
+                        max = 40,
+                        value = 25)
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+           plotOutput("distPlot")
+        )
+    )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    output$distPlot <- renderPlot({
+        # create plot
+        ggplot(faithful, aes(waiting)) +
+            geom_histogram(bind = input$bins,
+                           fill = "steelblue3",
+                           colour = "grey30") +
+            xlab("What are we even plotting here??") +
+            theme_minimal()
+    })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)

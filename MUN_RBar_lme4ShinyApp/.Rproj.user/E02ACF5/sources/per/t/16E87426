@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574112263815.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3287696296",
+    "id" : "16E87426",
+    "lastKnownWriteTime" : 1574185685,
+    "last_content_update" : 1574185685350,
+    "path" : "C:/Sync/Sauve/MUN Postdoc/MUN_RBar_lme4ShinyApp/app.R",
+    "project_path" : "app.R",
+    "properties" : {
+        "cursorPosition" : "144,78",
+        "scrollLine" : "113"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,12 @@
+name: mun_rbar_lme4shinyapp
+title: MUN_RBar_lme4ShinyApp
+username:
+account: sarahsauve
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1494713
+bundleId: 2601205
+url: https://sarahsauve.shinyapps.io/MUN_RBar_lme4ShinyApp/
+when: 1574185743.80151
+asMultiple: FALSE
+asStatic: FALSE
